@@ -50,13 +50,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="file : ${fileUploads}">
+                                <tr th:each="file : ${files}">
                                     <td>
-<                                        <a target="_blank" class="btn btn-success" th:href="@{/fileUpload}" >View</a>
-                                         <a href="#" >hello</a>
-<!--              a                          <a class="btn btn-danger"  th:href="@{/delete-file/{id}(id=${file.fileId})}">Delete</a>-->
+                                        <a th:href="@{/file/view/{fileId}(fileId=${file.fileId})}" target="{file.fileName}" class="btn btn-success">View</a>
+                                        <a th:href="@{/file/delete/{fileId} (fileId=${file.fileId})}" class="btn btn-danger">Delete</a>
                                     </td>
-                                    <td scope="row" th:text="${file.fileName}">ExampleFile.txt</td>
+                                    <th th:text="${file.fileName}" scope="row">ExampleFile.txt</th>
                                 </tr>
                                 </tbody>
                             </table>
@@ -136,14 +135,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="credential: ${credentials}">
+                                <tr th:each="credential : ${credentials}">
                                     <td>
-                                        <button th:onclick="javascript:showCredentialModal([[$credential.credentialId}]],[[${credential.url}]],[[${credential.username}]],[[${credential.password}]])"  type="button" class="btn btn-success">Edit</button>
-                                        <a  th:href="@{/credentials-credential/{id}(id=${credential.credentialId})}" class="btn btn-danger delete-note-button">Delete</a>
+                                        <a class="btn btn-success" th:onclick="javascript: showCredentialModal([[${credential.credentialId}]],[[${credential.url}]],[[${credential.username}]], [[${credential.password}]])">Edit</a>
+                                        <a th:href="@{/credential/delete/{credentialId}(credentialId=${credential.credentialId})}" class="btn btn-danger" >Delete</a>
                                     </td>
-                                    <th scope="row" th:text="${credential.url}"> sdffgs</th>
-                                    <td th:text="${credential.username}"></td>
-                                    <td th:text="${credential.password}"></td>
+                                    <th th:text="${credential.url}" scope="row">Example Credential URL</th>
+                                    <td th:text="${credential.username}">Example Credential Username</td>
+                                    <td th:text="${credential.password}">Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -158,7 +157,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" th:action="@{/credentialModal}"  method="POST">
+                                        <form action="#"  th:action="@{/credentialModal}"  method="POST">
                                             <input type="hidden" name="credentialId" id="credential-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">URL</label>

@@ -1,6 +1,7 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.Credentials;
+import com.udacity.jwdnd.course1.cloudstorage.model.Files;
 import com.udacity.jwdnd.course1.cloudstorage.model.Users;
 import com.udacity.jwdnd.course1.cloudstorage.service.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.service.HashService;
@@ -9,13 +10,12 @@ import com.udacity.jwdnd.course1.cloudstorage.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 @Controller
 public class CredentialController {
@@ -30,34 +30,38 @@ public class CredentialController {
         this.hashService = hashService;
     }
 
-    @GetMapping("/credentialModal")
-    public String getView(){
-        return "redirect:/home";
+    @GetMapping("/credential/delete/{credentialId}")
+    public String deleteCredential(Authentication auth, @PathVariable(value="credentialId") int credentialId, Model model){
+        System.out.println("delete");
+        this.credentialService.deleteCredential(credentialId);
+        return "home";
     }
 
     @PostMapping("/credentialModal")
-    public String postView(Authentication auth, @RequestParam("credentialId")  int credentialId, @RequestParam("url") String url, @RequestParam("username") String username,  @RequestParam("password") String password,  Model model) {
+    public String postView(Authentication auth, @ModelAttribute Credentials credentials, @RequestParam("credentialId")  int credentialId, @RequestParam("url") String url, @RequestParam("username") String username, @RequestParam("password") String password, Model model) {
         Users userDb = userService.getUser(auth.getName());
-        System.out.println("CREDENTIAL URL:" + url);
 
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
         String key = Base64.getEncoder().encodeToString(salt);
         String hashedPassword = hashService.getHashedValue(password, key);
-        System.out.println("CREDENTIAL URL:" + url);
-        System.out.println("username " + username);
-        System.out.println("key " +key);
-        System.out.println("password " + password);
-        System.out.println("user id:" + userDb.getUserId());
-        System.out.println("credentialid:" + credentialId);
+
         if (credentialId == 0) {
             credentialService.uploadCredential(url, username, key, hashedPassword, userDb.getUserId());
         }else{
             credentialService.updateCredential(url,username,key,hashedPassword,credentialId);
         }
-        model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
-        return "redirect:/home";
+
+        List<Credentials> credentialListNoPassword = new ArrayList<Credentials>();
+
+        for (Credentials c : this.credentialService.getCredentials(userDb.getUserId())){
+              c.setPassword("");
+              credentialListNoPassword.add(c);
+        }
+
+        model.addAttribute("credentials", credentialListNoPassword);
+        return "home";
     }
 }
 

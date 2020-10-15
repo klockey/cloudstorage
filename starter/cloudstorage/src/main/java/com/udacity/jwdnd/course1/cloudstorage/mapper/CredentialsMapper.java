@@ -15,9 +15,11 @@ public interface CredentialsMapper {
     @Insert("INSERT INTO CREDENTIALS (url, username, key, password, userid) VALUES(#{url}, #{username}, #{key}, #{password}, #{userId})")
     int insert(String url, String username, String key, String password, int userId);
 
-    @Update("UPDATE CREDENTIALS SET url = #{url}, set username = #{username}, set key = #{key}, set password = #{password}" +
+    @Update("UPDATE CREDENTIALS SET url = #{url}, username = #{username}, key = #{key}, password = #{password}" +
             "  WHERE credentialid = #{credentialId}")
-    void update(String url, String username, String key, String password);
+    void update(String url, String username, String key, String password, Integer credentialId);
 
+    @Delete("DELETE FROM CREDENTIALS WHERE credentialid = #{credentialId}")
+    void delete(Integer credentialId);
 }
 

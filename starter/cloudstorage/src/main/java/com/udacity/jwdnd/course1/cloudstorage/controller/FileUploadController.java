@@ -27,24 +27,20 @@ public class FileUploadController {
         fileUploadList =new ArrayList<Files>();
     }
 
-    @GetMapping("/delete-file/{fileId}")
-    public String deleteFile(Authentication auth, @PathVariable(value="fileId") Integer fileId, Model model){
-        this.fileService.deleteFile(fileId);
-        Users userDb = userService.getUser(auth.getName());
-        model.addAttribute("fileUploads",this.fileService.getFiles(userDb.getUserId()));
-        return "redirect:/home";
+    @GetMapping("/file/view/{fileId}")
+    public String getView(Authentication auth, @PathVariable(value="fileId") Integer fileId, Model model){
+        int userId = userService.getUser(auth.getName()).getUserId();
+        model.addAttribute("files", this.fileService.getFiles(userId));
+        return "home";
     }
 
-//    public String deleteNote(Authentication auth, @PathVariable(value = "noteId") Integer noteId, Model model) {
-//        this.noteService.deleteNote(noteId);
-//        Users userDb = userService.getUser(auth.getName());
-//        model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
-//        return "redirect:/home";
-//    }
-
-    @GetMapping("/fileUpload")
-    public String preview(){
-        return "redirect:/home";
+    @GetMapping("/file/delete/{fileId}")
+    public String deleteFile(Authentication auth, @PathVariable(value="fileId") Integer fileId, Model model){
+        System.out.println("delete");
+        this.fileService.deleteFile(fileId);
+        Users userDb = userService.getUser(auth.getName());
+        model.addAttribute("files",this.fileService.getFiles(userDb.getUserId()));
+        return "home";
     }
 
      @PostMapping("/fileUpload")
@@ -53,16 +49,15 @@ public class FileUploadController {
             System.out.println("fileUpload");
             Users userDb = userService.getUser(auth.getName());
             Files file = new Files(null, fileUpload.getOriginalFilename(),fileUpload.getContentType(),Long.toString(fileUpload.getSize()), userDb.getUserId(),fileUpload.getBytes());
-//            fileUploadList.add(file);
             fileService.uploadFile(file);
             for (Files f : this.fileService.getFiles(userDb.getUserId())){
                 System.out.println(f.getFileName());
             }
-
-            model.addAttribute("fileUploads", this.fileService.getFiles(userDb.getUserId()));
+            model.addAttribute("files", this.fileService.getFiles(userDb.getUserId()));
+            System.out.println(model.getAttribute("files"));
         }catch (IOException e) {
             e.printStackTrace();
         }
-        return "redirect:/home";
+        return "/home";
      }
 }

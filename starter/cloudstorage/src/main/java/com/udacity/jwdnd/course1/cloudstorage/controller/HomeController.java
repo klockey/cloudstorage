@@ -24,8 +24,6 @@ public class HomeController {
     @GetMapping
     public String getHome(Authentication auth, Model model){
         Users userDb = userService.getUser(auth.getName());
-        System.out.println("USERDBID:" + userDb.getUserId());
-        System.out.println("USERDBNAME:" + userDb.getUsername());
         model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
 
         return "home";

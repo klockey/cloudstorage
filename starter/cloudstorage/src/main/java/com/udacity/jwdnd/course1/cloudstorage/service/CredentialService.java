@@ -25,11 +25,15 @@ public class CredentialService {
     }
 
     public void updateCredential(String url, String username, String key, String password, int credentialId){
-        credentialMapper.update(url, username, key, password);
+        credentialMapper.update(url, username, key, password, credentialId);
     }
 
     public List<Credentials> getCredentials(int userId) {
         return credentialMapper.getCredentials(userId);
+    }
+
+    public void deleteCredential(int credentialId){
+        credentialMapper.delete(credentialId);
     }
 }
 
