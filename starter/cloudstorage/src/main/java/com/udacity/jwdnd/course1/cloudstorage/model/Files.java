@@ -1,6 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.model;
 
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
 public class Files {
 

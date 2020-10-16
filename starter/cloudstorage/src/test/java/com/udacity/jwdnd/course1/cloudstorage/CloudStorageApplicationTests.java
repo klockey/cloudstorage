@@ -44,6 +44,28 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	public void testSignupAuthorization(){
+		driver.get("http://localhost:" + this.port + "/signup");
+		driver.findElement(By.id("inputLastName")).sendKeys("C");
+		driver.findElement(By.id("inputUsername")).sendKeys("C");
+		driver.findElement(By.id("inputFirstName")).sendKeys("C");
+		driver.findElement(By.id("inputPassword")).sendKeys("C");
+		driver.findElement(By.id("submit-input")).click();
+		Assertions.assertEquals(   "You successfully signed up! Please continue to the login page.",
+				By.id("success-msg").findElement(driver).getText());
+	}
+
+	@Test
+	public void testNotes(){
+		driver.get("http://localhost:" + this.port + "/home");
+		driver.findElement(By.id("submit-button")).click();
+		boolean a = driver.findElement(By.name("noteModal")).isDisplayed();
+		Assertions.assertEquals(true, a);
+	}
+
+
+
+	@Test
 	public void getLoginPage() {
 		driver.get("http://localhost:" + this.port + "/login");
 		Assertions.assertEquals("Login", driver.getTitle());

@@ -4,15 +4,26 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Files;
 import com.udacity.jwdnd.course1.cloudstorage.model.Users;
 import com.udacity.jwdnd.course1.cloudstorage.service.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.service.UserService;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.http.MediaType.*;
 
 @Controller
 public class FileUploadController {
@@ -28,10 +39,24 @@ public class FileUploadController {
     }
 
     @GetMapping("/file/view/{fileId}")
-    public String getView(Authentication auth, @PathVariable(value="fileId") Integer fileId, Model model){
-        int userId = userService.getUser(auth.getName()).getUserId();
-        model.addAttribute("files", this.fileService.getFiles(userId));
-        return "home";
+    public  ResponseEntity<ByteArrayResource> getView(Authentication auth, @PathVariable(value="fileId") Integer fileId, Model model){
+        System.out.println("file view");
+        //Users userDb = userService.getUser(auth.getName());
+        ByteArrayResource resource = null;
+        Files file = fileService.getFileById(fileId);
+        HttpHeaders headers = new HttpHeaders();
+
+        System.out.println("file.getFileName()");
+
+        try {
+            resource = new ByteArrayResource(file.getFileData());
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return  ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(file.getContentType()))
+                .header(file.getFileName())
+                .body(resource);
     }
 
     @GetMapping("/file/delete/{fileId}")

@@ -6,6 +6,7 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Notes;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 
 @Service
@@ -28,4 +29,7 @@ public class FileService {
     public List<Files> getFiles(int userId) {
         return fileMapper.getFilesByUserId(userId);
     }
+
+    public Files getFileById(Integer fileId) { return fileMapper.getFileByFileId(fileId); }
+
 }
