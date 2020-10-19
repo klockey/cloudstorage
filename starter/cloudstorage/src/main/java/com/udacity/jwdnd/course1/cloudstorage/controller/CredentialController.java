@@ -31,10 +31,13 @@ public class CredentialController {
 
     @GetMapping("/credential/delete/{credentialId}")
     public String deleteCredential(Authentication auth, @PathVariable(value="credentialId") int credentialId, Model model){
-        System.out.println("delete");
+        System.out.println("delete " + credentialId);
+
         this.credentialService.deleteCredential(credentialId);
-        return "home";
+        return  "redirect:/home";
     }
+
+
 
     @PostMapping("/credentialModal")
     public String postView(Authentication auth, @ModelAttribute Credentials credentials, @RequestParam("credentialId")  int credentialId, @RequestParam("url") String url, @RequestParam("username") String username, @RequestParam("password") String password, Model model) {
@@ -56,10 +59,11 @@ public class CredentialController {
         for (Credentials c : this.credentialService.getCredentials(userDb.getUserId())) {
             c.setPassword(encryptionService.decryptValue(encryptedPassword,encodedKey));
             credentialListPassword.add(c);
+            System.out.println(c.getPassword());
         }
 
         model.addAttribute("credentials", credentialListPassword);
-        return "home";
+        return  "redirect:/home";
     }
 }
 
