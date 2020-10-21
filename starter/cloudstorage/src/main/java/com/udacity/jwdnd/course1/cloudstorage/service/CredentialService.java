@@ -10,14 +10,18 @@ import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class CredentialService {
     private final CredentialsMapper credentialMapper;
+    private final EncryptionService encryptionService;
 
-    public CredentialService(CredentialsMapper credentialMapper) {
+
+    public CredentialService(CredentialsMapper credentialMapper, EncryptionService encryptionService) {
         this.credentialMapper = credentialMapper;
+        this.encryptionService = encryptionService;
     }
 
     public void uploadCredential(String url, String username,String key,String password, int userId) {
@@ -29,7 +33,14 @@ public class CredentialService {
     }
 
     public List<Credentials> getCredentials(int userId) {
-        return credentialMapper.getCredentials(userId);
+        List<Credentials> list = credentialMapper.getCredentials(userId);
+        List<Credentials> decryptedList = new ArrayList<Credentials>();
+        for (Credentials c : list) {
+            c.setPassword(encryptionService.decryptValue(c.getPassword(), c.getKey()));
+            decryptedList.add(c);
+            System.out.println(c.getPassword());
+        }
+        return decryptedList;
     }
 
     public void deleteCredential(int credentialId){

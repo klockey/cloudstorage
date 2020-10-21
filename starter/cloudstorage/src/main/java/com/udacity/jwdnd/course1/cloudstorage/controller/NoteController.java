@@ -1,6 +1,8 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.Users;
+import com.udacity.jwdnd.course1.cloudstorage.service.CredentialService;
+import com.udacity.jwdnd.course1.cloudstorage.service.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.service.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.service.UserService;
 import org.springframework.context.annotation.Scope;
@@ -13,19 +15,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
-
 @Controller
 public class NoteController {
-
     private final NoteService noteService;
     private final UserService userService;
-
-    public NoteController (NoteService noteService, UserService userService) {
+    private final FileService fileService;
+    private final CredentialService credentialService;
+    public NoteController (NoteService noteService, UserService userService, FileService fileService, CredentialService credentialService) {
         System.out.println("noteservice");
         this.noteService = noteService;
         this.userService = userService;
+        this.fileService = fileService;
+        this.credentialService = credentialService;
     }
-
     @PostMapping("/noteModal")
     public String postView(Authentication auth, @RequestParam("noteId") Integer noteId, @RequestParam("noteTitle") String noteTitle, @RequestParam("noteDescription") String noteDescription, Model model)   {
         Users userDb = userService.getUser(auth.getName());
@@ -38,15 +40,19 @@ public class NoteController {
         } else{
             noteService.updateNote(noteTitle, noteDescription, noteId);
         }
-        model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
-        return "redirect:/home";
-    }
 
+        model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
+        model.addAttribute("files", this.fileService.getFiles(userDb.getUserId()));
+        model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
+        return  "redirect:/home";
+    }
     @GetMapping("/delete-note/{noteId}")
     public String deleteNote(Authentication auth, @PathVariable(value = "noteId") Integer noteId, Model model) {
         this.noteService.deleteNote(noteId);
         Users userDb = userService.getUser(auth.getName());
         model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
-        return "redirect:/home";
+        model.addAttribute("files", this.fileService.getFiles(userDb.getUserId()));
+        model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
+        return  "redirect:/home";
     }
 }

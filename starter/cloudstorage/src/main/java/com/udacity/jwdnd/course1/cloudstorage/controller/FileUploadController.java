@@ -2,7 +2,9 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.Files;
 import com.udacity.jwdnd.course1.cloudstorage.model.Users;
+import com.udacity.jwdnd.course1.cloudstorage.service.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.service.FileService;
+import com.udacity.jwdnd.course1.cloudstorage.service.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.service.UserService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
@@ -24,20 +26,20 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.MediaType.*;
-
 @Controller
 public class FileUploadController {
-
     private final FileService fileService;
     private final UserService userService;
+    private final CredentialService credentialService;
+    private final NoteService noteService;
     private List<Files> fileUploadList;
-
-    public FileUploadController(FileService fileService, UserService userService) {
+    public FileUploadController(FileService fileService, UserService userService, NoteService noteService, CredentialService credentialService) {
         this.fileService = fileService;
         this.userService = userService;
+        this.noteService = noteService;
+        this.credentialService = credentialService;
         fileUploadList =new ArrayList<Files>();
     }
-
     @GetMapping("/file/view/{fileId}")
     public  ResponseEntity<ByteArrayResource> getView(Authentication auth, @PathVariable(value="fileId") Integer fileId, Model model){
         System.out.println("file view");
@@ -45,9 +47,7 @@ public class FileUploadController {
         ByteArrayResource resource = null;
         Files file = fileService.getFileById(fileId);
         HttpHeaders headers = new HttpHeaders();
-
         System.out.println("file.getFileName()");
-
         try {
             resource = new ByteArrayResource(file.getFileData());
         }catch(Exception e) {
@@ -58,18 +58,18 @@ public class FileUploadController {
                 .header(file.getFileName())
                 .body(resource);
     }
-
     @GetMapping("/file/delete/{fileId}")
     public String deleteFile(Authentication auth, @PathVariable(value="fileId") Integer fileId, Model model){
         System.out.println("delete");
         this.fileService.deleteFile(fileId);
         Users userDb = userService.getUser(auth.getName());
         model.addAttribute("files",this.fileService.getFiles(userDb.getUserId()));
-        return "home";
+        model.addAttribute("notes",this.noteService.getNotes(userDb.getUserId()));
+        model.addAttribute("credentials",this.credentialService.getCredentials(userDb.getUserId()));
+        return  "redirect:/home";
     }
-
-     @PostMapping("/fileUpload")
-     public String uploader(Authentication auth, @RequestParam("fileToBeUploaded")  MultipartFile fileUpload, Model model ) {
+    @PostMapping("/fileUpload")
+    public String uploader(Authentication auth, @RequestParam("fileToBeUploaded")  MultipartFile fileUpload, Model model ) {
         try {
             System.out.println("fileUpload");
             Users userDb = userService.getUser(auth.getName());
@@ -78,11 +78,13 @@ public class FileUploadController {
             for (Files f : this.fileService.getFiles(userDb.getUserId())){
                 System.out.println(f.getFileName());
             }
-            model.addAttribute("files", this.fileService.getFiles(userDb.getUserId()));
+            model.addAttribute("files",this.fileService.getFiles(userDb.getUserId()));
+            model.addAttribute("notes",this.noteService.getNotes(userDb.getUserId()));
+            model.addAttribute("credentials",this.credentialService.getCredentials(userDb.getUserId()));
             System.out.println(model.getAttribute("files"));
         }catch (IOException e) {
             e.printStackTrace();
         }
-        return "/home";
-     }
+        return  "redirect:/home";
+    }
 }
