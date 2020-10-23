@@ -28,6 +28,7 @@ public class NoteController {
         this.fileService = fileService;
         this.credentialService = credentialService;
     }
+
     @PostMapping("/noteModal")
     public String postView(Authentication auth, @RequestParam("noteId") Integer noteId, @RequestParam("noteTitle") String noteTitle, @RequestParam("noteDescription") String noteDescription, Model model)   {
         Users userDb = userService.getUser(auth.getName());
@@ -35,15 +36,20 @@ public class NoteController {
         System.out.println("NOTE TITLE:" + noteTitle);
         System.out.println("NOTE DESCRIPTION:" + noteDescription);
         System.out.println("user id:" + userDb.getUserId());
+
         if(noteId == 0){
             noteService.uploadNote(noteTitle, noteDescription, userDb.getUserId());
+            model.addAttribute("creation", true);
+            System.out.println("creation");
         } else{
             noteService.updateNote(noteTitle, noteDescription, noteId);
+            model.addAttribute("update", true);
         }
 
         model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
         model.addAttribute("files", this.fileService.getFiles(userDb.getUserId()));
         model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
+
         return  "redirect:/home";
     }
     @GetMapping("/delete-note/{noteId}")
@@ -53,6 +59,7 @@ public class NoteController {
         model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
         model.addAttribute("files", this.fileService.getFiles(userDb.getUserId()));
         model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
+        model.addAttribute("deletion", true);
         return  "redirect:/home";
     }
 }

@@ -2,7 +2,7 @@
     <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!--        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">-->
 
         <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}">
 
@@ -17,6 +17,7 @@
             <form action="#" th:action="@{/signup}" method="POST">
                 <div id="success-msg" th:if="${signupSuccess}" class="alert alert-dark">
                     You successfully signed up! Please continue to the <a>login</a> page.
+                    <meta http-equiv="Refresh" th:content="|3; url=${url}|" />
                 </div>
                 <div id="error-msg" th:if="${signupError}" class="alert alert-danger">
                     <span th:text="${signupError}"> </span>
