@@ -16,7 +16,7 @@ import org.h2.server.web.WebServlet;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
     public SecurityConfig(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true)
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .deleteCookies("JSESSIONID")
-                .logoutSuccessUrl("/login?logout");;
+                .logoutSuccessUrl("/login?logout");
 
         http.formLogin()
                 .loginPage("/login")

@@ -15,6 +15,17 @@
                     <button type="submit" class="btn btn-secondary float-right">Logout</button>
                 </form>
             </div>
+            <div id="success-msg" th:if="${param.creation}" class="alert alert-dark">
+                You successfully created a note.
+            </div>
+            <div id="update-msg" th:unless="${param.creation}" class="alert alert-dark">
+            </div>
+
+<!--            <div id="update-msg" th:unless="${param.creation} == false">-->
+
+            <div id="delete-msg" th:if="${param.deletion} == true" class="alert alert-dark">
+                You deleted a note.
+            </div>
             <div id="contentDiv" style="clear: right;">
                 <nav style="clear: right;">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -86,13 +97,6 @@
                                 </tr>
                                 </tbody>
                             </table>
-
-                            <div id="success-msg" th:if="${creation}" class="alert alert-dark">
-                                You successfully created a note.
-                            </div>
-                            <div id="delete-msg" th:if="${deletion}" class="alert alert-dark">
-                                You deleted a note.
-                            </div>
                         </div>
 
                         <div class="modal fade" id="noteModal" name="noteModal" tabindex="-1" role="dialog" aria-labelledby="noteModalLabel" aria-hidden="true">

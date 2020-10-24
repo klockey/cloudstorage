@@ -19,8 +19,9 @@ public class NoteService {
     public void updateNote(String noteTitle, String noteDescription, int noteId){
         noteMapper.update(noteTitle, noteDescription, noteId);
     }
-    public void deleteNote(Integer noteId) {
+    public boolean deleteNote(Integer noteId) {
         noteMapper.delete(noteId);
+        return true;
     }
     public List<Notes> getNotes(int userId) {
         return noteMapper.getNotes(userId);

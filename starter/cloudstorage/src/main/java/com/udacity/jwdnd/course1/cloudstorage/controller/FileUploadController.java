@@ -32,7 +32,7 @@ public class FileUploadController {
     private final UserService userService;
     private final CredentialService credentialService;
     private final NoteService noteService;
-    private List<Files> fileUploadList;
+    private final List<Files> fileUploadList;
     public FileUploadController(FileService fileService, UserService userService, NoteService noteService, CredentialService credentialService) {
         this.fileService = fileService;
         this.userService = userService;
