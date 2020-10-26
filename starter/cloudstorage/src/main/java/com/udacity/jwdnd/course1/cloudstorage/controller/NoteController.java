@@ -37,17 +37,19 @@ public class NoteController {
         System.out.println("NOTE TITLE:" + noteTitle);
         System.out.println("NOTE DESCRIPTION:" + noteDescription);
         System.out.println("user id:" + userDb.getUserId());
-       // redirectAttributes.addAttribute("creation",false);
+      //  redirectAttributes.addAttribute("creation",false);
 
         if(noteId == 0){
             noteService.uploadNote(noteTitle, noteDescription, userDb.getUserId());
     //        model.addAttribute("creation", true);
             System.out.println("creation");
-            redirectAttributes.addAttribute("creation",true);
+//            redirectAttributes.addAttribute("update","false");
+            redirectAttributes.addAttribute("creation","true");
         } else{
             System.out.println("update");
             noteService.updateNote(noteTitle, noteDescription, noteId);
-            redirectAttributes.addAttribute("creation", false);
+          //  redirectAttributes.addAttribute("creation","false");
+            redirectAttributes.addAttribute("update", "true");
          //   redirectAttributes.addAttribute("deletion", false);
         }
 

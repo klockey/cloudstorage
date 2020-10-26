@@ -8,6 +8,7 @@
         <version>2.2.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.udacity.jwdnd.course1</groupId>
     <artifactId>cloudstorage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -16,6 +17,8 @@
 
     <properties>
         <java.version>11</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <dependencies>

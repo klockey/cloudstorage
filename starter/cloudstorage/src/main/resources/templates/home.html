@@ -18,13 +18,23 @@
             <div id="success-msg" th:if="${param.creation}" class="alert alert-dark">
                 You successfully created a note.
             </div>
-            <div id="update-msg" th:unless="${param.creation}" class="alert alert-dark">
-            </div>
-
-<!--            <div id="update-msg" th:unless="${param.creation} == false">-->
-
-            <div id="delete-msg" th:if="${param.deletion} == true" class="alert alert-dark">
+            <div id="delete-msg" th:if="${param.deletion}" class="alert alert-dark">
                 You deleted a note.
+            </div>
+            <div id="update-msg" th:if="${param.update}" class="alert alert-dark">
+                You updated a file.
+            </div>
+            <div id="upload-msg" th:if="${param.upload}" class="alert alert-dark">
+                You uploaded a file.
+            </div>
+            <div id="deleteFile-msg" th:if="${param.deleteFile}" class="alert alert-dark">
+                You deleted a file.
+            </div>
+            <div id="download-msg" th:if="${param.download}" class="alert alert-dark">
+                You downloaded a file.
+            </div>
+            <div id="selectFile-msg" th:if="${param.selectFile}" class="alert alert-dark">
+                Please a select a File!
             </div>
             <div id="contentDiv" style="clear: right;">
                 <nav style="clear: right;">
@@ -181,7 +191,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Password</label>
-                                                <input type="text" name="password"  class="form-control" id="credential-password" maxlength="30" required>
+                                                <input type="text" th:value="${password}" name="password"  class="form-control" id="credential-password" maxlength="30" required>
                                             </div>
                                             <button id="credentialSubmit" type="submit" class="d-none"></button>
                                         </form>
