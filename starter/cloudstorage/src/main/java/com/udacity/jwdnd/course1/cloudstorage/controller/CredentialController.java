@@ -39,7 +39,6 @@ public class CredentialController {
         model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
         model.addAttribute("files", this.fileService.getFiles(userDb.getUserId()));
         model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
-        // return  "home";
         return "redirect:/home";
     }
 
@@ -55,24 +54,12 @@ public class CredentialController {
         String encryptedPassword = encryptionService.encryptValue(password, encodedKey);
 
         if (credentialId == 0) {
-            //   model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
-            //  credentialService.uploadCredential(url, username, encodedKey,encryptedPassword, userDb.getUserId());
             credentialService.uploadCredential(url, username, encodedKey, encryptedPassword, userDb.getUserId());
-            model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
 
         } else {
-            System.out.println("decrypt");
-            //   model.addAttribute("credentials", this.credentialService.getDecryptedCredentials(userDb.getUserId()));
-            //   model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
             credentialService.updateCredential(url, username, encodedKey, encryptedPassword, credentialId);
-            model.addAttribute("credentials", this.credentialService.getDecryptedCredentials(userDb.getUserId(), encryptedPassword));
-
-            for (Credentials c : this.credentialService.getDecryptedCredentials(userDb.getUserId(), encryptedPassword)) {
-                System.out.println("password " + c.getPassword());
-            }
         }
-            //  model.addAttribute("password", password);
-            // model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
+            model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
             model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
             model.addAttribute("files", this.fileService.getFiles(userDb.getUserId()));
             return "redirect:/home";

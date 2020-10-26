@@ -18,13 +18,10 @@ public class CredentialService {
     private final CredentialsMapper credentialMapper;
     private final EncryptionService encryptionService;
 
-
     public CredentialService(CredentialsMapper credentialMapper, EncryptionService encryptionService) {
         this.credentialMapper = credentialMapper;
         this.encryptionService = encryptionService;
     }
-
-
 
     public void uploadCredential(String url, String username,String key,String password, int userId) {
         credentialMapper.insert(url, username, key, password, userId);
@@ -38,31 +35,10 @@ public class CredentialService {
         List<Credentials> list = credentialMapper.getCredentials(userId);
         List<Credentials> encryptedList = new ArrayList<Credentials>();
         for (Credentials c : list) {
-        //    c.setPassword(encryptionService.decryptValue(c.getPassword(), c.getKey()));
-
-           // c.setPassword(c.getPassword(),c.getKey());
-          //  decryptPassword = encryptionService.decryptValue(c.getPassword(),c.getKey());
-        //    c.setPassword(decryptPassword);
             encryptedList.add(c);
-         //   System.out.println(c.getPassword());
         }
         return encryptedList;
     }
-
-    public List<Credentials> getDecryptedCredentials(int userId, String encryptedPassword) {
-        List<Credentials> list = credentialMapper.getCredentials(userId);
-        List<Credentials> listCredentials = new ArrayList<>();
-        String decryptPassword;
-
-        for (Credentials c : list) {
-              decryptPassword = encryptionService.decryptValue(encryptedPassword, c.getKey());
-              System.out.println("decryptPassword " + decryptPassword);
-              c.setPassword(decryptPassword);
-              listCredentials.add(c);
-        }
-        return listCredentials;
-    }
-
 
     public void deleteCredential(int credentialId){
         credentialMapper.delete(credentialId);

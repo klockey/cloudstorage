@@ -24,9 +24,6 @@
             <div id="update-msg" th:if="${param.update}" class="alert alert-dark">
                 You updated a file.
             </div>
-            <div id="upload-msg" th:if="${param.upload}" class="alert alert-dark">
-                You uploaded a file.
-            </div>
             <div id="deleteFile-msg" th:if="${param.deleteFile}" class="alert alert-dark">
                 You deleted a file.
             </div>
@@ -36,6 +33,17 @@
             <div id="selectFile-msg" th:if="${param.selectFile}" class="alert alert-dark">
                 Please a select a File!
             </div>
+            <div id="mutipleFile-msg" th:if="${param.multipleFile}" class="alert alert-dark">
+                File already exists!
+            </div>
+            <div id="uploadFile-msg" th:if="${param.uploadFile}" class="alert alert-dark">
+                File uploaded!
+            </div>
+            <div id="duplicateUploadFile-msg" th:if="${param.duplicateUploadFile}" class="alert alert-dark">
+                File already exists!
+            </div>
+
+
             <div id="contentDiv" style="clear: right;">
                 <nav style="clear: right;">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -159,7 +167,7 @@
                                 <tbody>
                                 <tr th:each="credential : ${credentials}">
                                     <td>
-                                        <a class="btn btn-success" th:onclick="javascript: showCredentialModal([[${credential.credentialId}]],[[${credential.url}]],[[${credential.username}]], [[${credential.password}]])">Edit</a>
+                                        <a class="btn btn-success" th:onclick="javascript: showCredentialModal([[${credential.credentialId}]],[[${credential.url}]],[[${credential.username}]], [[${encryptionService.decryptValue(credential.password, credential.key)}]])">Edit</a>
                                         <a th:href="@{/credential/delete/{credentialId}(credentialId=${credential.credentialId})}" class="btn btn-danger" >Delete</a>
                                     </td>
                                     <th th:text="${credential.url}" scope="row">Example Credential URL</th>
