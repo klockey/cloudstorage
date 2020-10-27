@@ -12,6 +12,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import java.io.IOException;
+
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
 
@@ -20,6 +23,7 @@ class CloudStorageApplicationTests {
 
 	private WebDriver driver;
 	private WebDriverWait wait;
+
 
 	@BeforeAll
 	static void beforeAll() {
@@ -30,6 +34,7 @@ class CloudStorageApplicationTests {
 	public void beforeEach() {
 		this.driver = new ChromeDriver();
 		wait = new WebDriverWait(driver, 10);
+		System.out.println(driver.getTitle());
 	}
 
 	@AfterEach
@@ -38,8 +43,6 @@ class CloudStorageApplicationTests {
 			driver.quit();
 		}
 	}
-
-
 
 	@Test
 	public void testLoginAuthorization(){
@@ -52,7 +55,7 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
-	public void testSignupAuthorization(){
+	public void testSignupAuthorization() throws Exception{
 		driver.get("http://localhost:" + this.port + "/signup");
 		driver.findElement(By.id("inputLastName")).sendKeys("C");
 		driver.findElement(By.id("inputUsername")).sendKeys("C");
@@ -61,6 +64,14 @@ class CloudStorageApplicationTests {
 		driver.findElement(By.id("submit-input")).click();
 		Assertions.assertEquals(   "You successfully signed up! Please continue to the login page.",
 				By.id("success-msg").findElement(driver).getText());
+	    driver.findElement(By.id("loginHref")).click();
+		driver.findElement(By.id("username")).sendKeys("C");
+		driver.findElement(By.id("password")).sendKeys("C");
+		driver.findElement(By.id("submit-button")).click();
+		Assertions.assertEquals("Home", driver.getTitle());
+		driver.findElement(By.id("submit")).click();
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertNotEquals("Home", driver.getTitle());
 	}
 
 	@Test
@@ -239,39 +250,6 @@ class CloudStorageApplicationTests {
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("submit-button"))));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("submit-button")));
 
-/*
-			Note Flow
-*/
-		wait.until(ExpectedConditions.titleContains("Home"));
-		Assertions.assertEquals("Home", driver.getTitle());
-//Click in the field nav-notes-tab
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("nav-notes-tab"))));
-		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("nav-notes-tab")));
-//Click in the field submit-button
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("submit-button"))));
-		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("submit-button")));
-//Click and fill field note-title
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("note-title"))));
-		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("note-title")));
-		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + title + "';", driver.findElement(By.id("note-title")));
-//Click and fill field note-description
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("note-description"))));
-		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("note-description")));
-		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + description + "';", driver.findElement(By.id("note-description")));
-//Click in the field //*[@id="noteModal"]/div/div/div[3]/button[2] (Save changes button of modal)
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@id=\"noteModal\"]/div/div/div[3]/button[2]"))));
-		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.xpath("//*[@id=\"noteModal\"]/div/div/div[3]/button[2]")));
-//Click in the field nav-notes-tab
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("nav-notes-tab"))));
-		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("nav-notes-tab")));
-//Verify the inclusion of Note title
-		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/th"))));
-		String titleNote = driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/th")).getText();
-		Assertions.assertEquals(title, titleNote);
-//Verify the inclusion of Note description
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/td[2]"))));
-		String descriptionNote = driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/td[2]")).getText();
-		Assertions.assertEquals(description, descriptionNote);
 
 
 		/*
@@ -288,12 +266,12 @@ class CloudStorageApplicationTests {
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("credential-submit-button"))));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("credential-submit-button")));
 
-		//Click and fill field note-title
+		//
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("credential-url"))));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("credential-url")));
 		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + URL + "';", driver.findElement(By.id("credential-url")));
 
-		//Click and fill field note-description
+		//
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("credential-username"))));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("credential-username")));
 		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + credentialUsername + "';", driver.findElement(By.id("credential-username")));
@@ -319,13 +297,13 @@ class CloudStorageApplicationTests {
 		//Verify the inclusion of Credential Username
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@id=\"credentialTable\"]/tbody/tr/td[2]"))));
 		String usernameCredential = driver.findElement(By.xpath("//*[@id=\"credentialTable\"]/tbody/tr/td[2]")).getText();
-		Assertions.assertEquals(description,descriptionNote);
+		Assertions.assertEquals(username,usernameCredential);
 		System.out.println(username + " " + usernameCredential);
 
 		//Verify the inclusion of Credential Password
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@id=\"credentialTable\"]/tbody/tr/td[2]"))));
 		String passwordCredential = driver.findElement(By.xpath("//*[@id=\"credentialTable\"]/tbody/tr/td[2]")).getText();
-		Assertions.assertEquals(description,descriptionNote);
+		Assertions.assertEquals(password,passwordCredential);
 		System.out.println(password + " " + passwordCredential);
 	}
 
@@ -338,6 +316,7 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void getHomePage() {
+		System.out.println(driver.getTitle());
 		driver.get("http://localhost:" + this.port + "/home");
 		Assertions.assertEquals("Home", driver.getTitle());
 
