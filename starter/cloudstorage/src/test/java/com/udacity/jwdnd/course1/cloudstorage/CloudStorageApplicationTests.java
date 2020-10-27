@@ -19,7 +19,7 @@ import java.io.IOException;
 class CloudStorageApplicationTests {
 
 	@LocalServerPort
-	private int port;
+	private int port=8080;
 
 	private WebDriver driver;
 	private WebDriverWait wait;
@@ -46,8 +46,8 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testLoginAuthorization(){
-		driver.get("http://localhost:" + this.port + "/login");
-		driver.findElement(By.id("username")).sendKeys("b");
+		driver.get("http://localhost:" + this.port + "/login"); // unauthorized access to the login
+		driver.findElement(By.id("username")).sendKeys("b");   //  login into page
 		driver.findElement(By.id("password")).sendKeys("b");
 		driver.findElement(By.id("submit-button")).click();
 		Assertions.assertEquals("Invalid username or password",
@@ -56,22 +56,26 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testSignupAuthorization() throws Exception{
-		driver.get("http://localhost:" + this.port + "/signup");
-		driver.findElement(By.id("inputLastName")).sendKeys("C");
-		driver.findElement(By.id("inputUsername")).sendKeys("C");
-		driver.findElement(By.id("inputFirstName")).sendKeys("C");
-		driver.findElement(By.id("inputPassword")).sendKeys("C");
-		driver.findElement(By.id("submit-input")).click();
+		driver.get("http://localhost:" + this.port + "/signup");    // unauthorized access to the signup page
+		driver.findElement(By.id("inputLastName")).sendKeys("C");  // signup page
+		driver.findElement(By.id("inputUsername")).sendKeys("C");  // signup page
+		driver.findElement(By.id("inputFirstName")).sendKeys("C");  // signup page
+		driver.findElement(By.id("inputPassword")).sendKeys("C");  // signup page
+		driver.findElement(By.id("submit-input")).click();   // sign up new user
 		Assertions.assertEquals(   "You successfully signed up! Please continue to the login page.",
-				By.id("success-msg").findElement(driver).getText());
-	    driver.findElement(By.id("loginHref")).click();
-		driver.findElement(By.id("username")).sendKeys("C");
-		driver.findElement(By.id("password")).sendKeys("C");
-		driver.findElement(By.id("submit-button")).click();
-		Assertions.assertEquals("Home", driver.getTitle());
-		driver.findElement(By.id("submit")).click();
-		driver.get("http://localhost:" + this.port + "/home");
-		Assertions.assertNotEquals("Home", driver.getTitle());
+				By.id("success-msg").findElement(driver).getText());  //verify signup
+	    driver.findElement(By.id("loginHref")).click();  //logout out to login page
+		driver.get("http://localhost:" + this.port + "/signup");  // go to signup
+		Assertions.assertEquals("Sign Up",driver.getTitle());  // keep out of sign up no authentication
+		driver.get("http://localhost:" + this.port + "/login");  // go to login page
+		driver.findElement(By.id("username")).sendKeys("C");  // username of login
+		driver.findElement(By.id("password")).sendKeys("C");   // password of login
+		driver.findElement(By.id("submit-button")).click();  // click to home page
+		Assertions.assertEquals("Home", driver.getTitle());  // home page
+		driver.findElement(By.id("submit-logout")).click();   // login page
+		driver.get("http://localhost:" + this.port + "/home");  // try to sign into home
+		Thread.sleep(5000);
+		Assertions.assertNotEquals("Home", driver.getTitle());  // title not equal
 	}
 
 	@Test

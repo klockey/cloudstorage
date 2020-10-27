@@ -11,8 +11,8 @@
     <body class="p-3 mb-2 bg-light text-black">
         <div class="container">
             <div id="logoutDiv">
-                <form action="#" th:action="@{/logout}" method="POST">
-                    <button id="submit" type="submit" class="btn btn-secondary float-right">Logout</button>
+                <form action="#" th:action="@{/logout-success}" method="POST">
+                    <button id="submit-logout" type="submit" class="btn btn-secondary float-right">Logout</button>
                 </form>
             </div>
             <div id="success-msg" th:if="${param.creation}" class="alert alert-dark">
