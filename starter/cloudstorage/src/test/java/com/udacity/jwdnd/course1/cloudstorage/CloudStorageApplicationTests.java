@@ -45,13 +45,18 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
-	public void testLoginAuthorization(){
+	public void UnAuthorization(){
 		driver.get("http://localhost:" + this.port + "/login"); // unauthorized access to the login
-		driver.findElement(By.id("username")).sendKeys("b");   //  login into page
-		driver.findElement(By.id("password")).sendKeys("b");
-		driver.findElement(By.id("submit-button")).click();
-		Assertions.assertEquals("Invalid username or password",
-				By.id("error-msg").findElement(driver).getText());
+		Assertions.assertEquals("Login", driver.getTitle());
+		driver.get("http://localhost:" + this.port + "/signup"); // unauthorized access to the login
+		Assertions.assertEquals("Sign Up", driver.getTitle());
+		driver.get("http://localhost:" + this.port + "/home"); // unauthorized access to the login
+		Assertions.assertNotEquals("Home", driver.getTitle());
+//		driver.findElement(By.id("username")).sendKeys("b");   //  login into page
+//		driver.findElement(By.id("password")).sendKeys("b");
+//		driver.findElement(By.id("submit-button")).click();
+//		Assertions.assertEquals("Invalid username or password",
+//				By.id("error-msg").findElement(driver).getText());
 	}
 
 	@Test
