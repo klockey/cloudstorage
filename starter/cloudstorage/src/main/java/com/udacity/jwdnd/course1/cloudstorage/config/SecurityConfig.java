@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.headers().frameOptions().disable();
         http.authorizeRequests()
-                .antMatchers("/h2-console/**","/signup", "/login", "/css/**", "/js/**")
+                .antMatchers("/h2-console/**","/signup","/logout-success", "/login", "/css/**", "/js/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -43,6 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessUrl("/login?logout");
+
 
         http.formLogin()
                 .loginPage("/login")

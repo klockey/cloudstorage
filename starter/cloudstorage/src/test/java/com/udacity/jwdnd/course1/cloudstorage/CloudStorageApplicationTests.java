@@ -19,7 +19,7 @@ import java.io.IOException;
 class CloudStorageApplicationTests {
 
 	@LocalServerPort
-	private int port=8080;
+	private int port;
 
 	private WebDriver driver;
 	private WebDriverWait wait;
@@ -68,11 +68,15 @@ class CloudStorageApplicationTests {
 		driver.get("http://localhost:" + this.port + "/signup");  // go to signup
 		Assertions.assertEquals("Sign Up",driver.getTitle());  // keep out of sign up no authentication
 		driver.get("http://localhost:" + this.port + "/login");  // go to login page
+		Thread.sleep(5000);
 		driver.findElement(By.id("username")).sendKeys("C");  // username of login
 		driver.findElement(By.id("password")).sendKeys("C");   // password of login
 		driver.findElement(By.id("submit-button")).click();  // click to home page
+		Thread.sleep(5000);
 		Assertions.assertEquals("Home", driver.getTitle());  // home page
+		Thread.sleep(5000);
 		driver.findElement(By.id("submit-logout")).click();   // login page
+		Thread.sleep(5000);
 		driver.get("http://localhost:" + this.port + "/home");  // try to sign into home
 		Thread.sleep(5000);
 		Assertions.assertNotEquals("Home", driver.getTitle());  // title not equal
