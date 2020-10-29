@@ -20,7 +20,7 @@ import java.util.Base64;
 class CloudStorageApplicationTests {
 
 
-	private final EncryptionService encryptionService = new EncryptionService();
+	EncryptionService encryptionService = new EncryptionService();
 
 
 	@LocalServerPort
@@ -404,13 +404,17 @@ class CloudStorageApplicationTests {
 
 		System.out.println("password encrypted" + passwordEncryptedCredential);
 
+		System.out.println("credential " + credentialPassword);
+
 		// decrypt password
 		SecureRandom random = new SecureRandom();
 		byte[] key = new byte[16];
 		random.nextBytes(key);
 		String encodedKey = Base64.getEncoder().encodeToString(key);
 
-		Assertions.assertEquals(credentialPassword, this.encryptionService.decryptValue(passwordEncryptedCredential, encodedKey));
+		String a = this.encryptionService.decryptValue(passwordEncryptedCredential, encodedKey);
+
+		Assertions.assertEquals(credentialPassword,a);
 
 		/*
 		existing set of credentials flow
