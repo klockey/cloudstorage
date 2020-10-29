@@ -395,19 +395,7 @@ class CloudStorageApplicationTests {
 		System.out.println(password + " " + passwordCredential);
 	}
 
-	@Test
-	public void getLoginPage() {
-		driver.get("http://localhost:" + this.port + "/login");
-		Assertions.assertEquals("Login", driver.getTitle());
 
-	}
 
-	@Test
-	public void getHomePage() {
-		System.out.println(driver.getTitle());
-		driver.get("http://localhost:" + this.port + "/home");
-		Assertions.assertEquals("Home", driver.getTitle());
-
-	}
 
 }
