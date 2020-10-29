@@ -44,47 +44,62 @@ class CloudStorageApplicationTests {
 		}
 	}
 
-	@Test
-	public void UnAuthorization(){
-		driver.get("http://localhost:" + this.port + "/login"); // unauthorized access to the login
-		Assertions.assertEquals("Login", driver.getTitle());
-		driver.get("http://localhost:" + this.port + "/signup"); // unauthorized access to the login
-		Assertions.assertEquals("Sign Up", driver.getTitle());
-		driver.get("http://localhost:" + this.port + "/home"); // unauthorized access to the login
-		Assertions.assertNotEquals("Home", driver.getTitle());
-//		driver.findElement(By.id("username")).sendKeys("b");   //  login into page
-//		driver.findElement(By.id("password")).sendKeys("b");
-//		driver.findElement(By.id("submit-button")).click();
-//		Assertions.assertEquals("Invalid username or password",
-//				By.id("error-msg").findElement(driver).getText());
-	}
+	/*
+	Test home, login and signup authorization without logging in
+	 */
+
+//  Write a test that verifies that an unauthorized user can only access the login and signup pages.
 
 	@Test
-	public void testSignupAuthorization() throws Exception{
-		driver.get("http://localhost:" + this.port + "/signup");    // unauthorized access to the signup page
-		driver.findElement(By.id("inputLastName")).sendKeys("C");  // signup page
-		driver.findElement(By.id("inputUsername")).sendKeys("C");  // signup page
-		driver.findElement(By.id("inputFirstName")).sendKeys("C");  // signup page
-		driver.findElement(By.id("inputPassword")).sendKeys("C");  // signup page
-		driver.findElement(By.id("submit-input")).click();   // sign up new user
-		Assertions.assertEquals(   "You successfully signed up! Please continue to the login page.",
-				By.id("success-msg").findElement(driver).getText());  //verify signup
-	    driver.findElement(By.id("loginHref")).click();  //logout out to login page
-		driver.get("http://localhost:" + this.port + "/signup");  // go to signup
-		Assertions.assertEquals("Sign Up",driver.getTitle());  // keep out of sign up no authentication
-		driver.get("http://localhost:" + this.port + "/login");  // go to login page
-		Thread.sleep(5000);
-		driver.findElement(By.id("username")).sendKeys("C");  // username of login
-		driver.findElement(By.id("password")).sendKeys("C");   // password of login
-		driver.findElement(By.id("submit-button")).click();  // click to home page
-		Thread.sleep(5000);
-		Assertions.assertEquals("Home", driver.getTitle());  // home page
-		Thread.sleep(5000);
-		driver.findElement(By.id("submit-logout")).click();   // login page
-		Thread.sleep(5000);
-		driver.get("http://localhost:" + this.port + "/home");  // try to sign into home
-		Thread.sleep(5000);
-		Assertions.assertNotEquals("Home", driver.getTitle());  // title not equal
+	public void UnAuthorization(){
+			driver.get("http://localhost:" + this.port + "/home");
+		    Assertions.assertNotEquals("Home", driver.getTitle());
+		    driver.get("http://localhost:" + this.port + "/login");
+			Assertions.assertEquals("Login", driver.getTitle());
+		    driver.get("http://localhost:" + this.port + "/signup");
+		    Assertions.assertEquals("Sign Up", driver.getTitle());
+	}
+
+	/*
+         sign up user, logs in, logs out verify home is no longer accessible.
+	 */
+
+//  Write a test that signs up a new user, logs in, verifies that the home page is accessible, logs out,
+//  and verifies that the home page is no longer accessible.
+
+	@Test
+	public void testSignupAuthorization() {
+		driver.get("http://localhost:" + this.port + "/signup"); // unauthorized access to the signup page
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("inputFirstName"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("inputFirstName")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + "C" + "';", driver.findElement(By.id("inputFirstName")));
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("inputLastName"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("inputLastName")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + "C" + "';", driver.findElement(By.id("inputLastName")));
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("inputUsername"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("inputUsername")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + "C" + "';", driver.findElement(By.id("inputUsername")));
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("inputPassword"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("inputPassword")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + "C" + "';", driver.findElement(By.id("inputPassword")));
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("submit-input"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("submit-input")));
+		Assertions.assertEquals("You successfully signed up! Please continue to the login page.",
+				By.id("success-msg").findElement(driver).getText());
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("loginHref"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("loginHref")));
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("username"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("username")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + "C" + "';", driver.findElement(By.id("username")));
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("password"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("password")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + "C" + "';", driver.findElement(By.id("password")));
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("submit-button"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("submit-button")));
+		Assertions.assertEquals("Home", driver.getTitle()); // home page
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("submit-logout"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("submit-logout")));
+		Assertions.assertNotEquals("Home", driver.getTitle()); // title not equal
 	}
 
 	@Test
@@ -155,6 +170,9 @@ class CloudStorageApplicationTests {
 		/*
 			Note Flow
 		 */
+
+		//Write a test that creates a note, and verifies it is displayed.
+
 		wait.until(ExpectedConditions.titleContains("Home"));
 		Assertions.assertEquals("Home",driver.getTitle());
 
@@ -194,6 +212,63 @@ class CloudStorageApplicationTests {
 		String descriptionNote = driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/td[2]")).getText();
 		Assertions.assertEquals(description,descriptionNote);
 
+		/*
+		/*   edit note and verify
+		*/
+
+		//*** Write a test that edits an existing note and verifies that the changes are displayed  ***
+
+		wait.until(ExpectedConditions.titleContains("Home"));
+		Assertions.assertEquals("Home",driver.getTitle());
+
+		//Click in the field nav-notes-tab
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("nav-notes-tab"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("nav-notes-tab")));
+
+		//Click in the field edit-button
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("edit-button"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("edit-button")));
+
+		//Click and fill field note-title
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("note-title"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("note-title")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + title + "';", driver.findElement(By.id("note-title")));
+
+		//Click and fill field note-description
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("note-description"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("note-description")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + description + "';", driver.findElement(By.id("note-description")));
+
+		//Click in the field //*[@id="noteModal"]/div/div/div[3]/button[2] (Save changes button of modal)
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@id=\"noteModal\"]/div/div/div[3]/button[2]"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.xpath("//*[@id=\"noteModal\"]/div/div/div[3]/button[2]")));
+
+		//Verify the inclusion of Note title
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/th"))));
+		titleNote = driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/th")).getText();
+		Assertions.assertEquals(title,titleNote);
+
+		//Verify the inclusion of Note description
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/td[2]"))));
+		descriptionNote = driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/td[2]")).getText();
+		Assertions.assertEquals(description,descriptionNote);
+
+		/*
+		Deletes note and verifies it is deleted
+		 */
+		//Write a test that deletes a note and verifies that the note is no longer displayed.
+
+		wait.until(ExpectedConditions.titleContains("Home"));
+		Assertions.assertEquals("Home",driver.getTitle());
+
+		//Click in the field nav-notes-tab
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("nav-notes-tab"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("nav-notes-tab")));
+
+        //Click in the field delete-button
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("delete-button"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("delete-button")));
+		Assertions.assertNotEquals(description, descriptionNote);
 	}
 
 	@Test
