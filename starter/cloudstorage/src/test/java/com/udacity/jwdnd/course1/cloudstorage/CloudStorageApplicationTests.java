@@ -505,7 +505,7 @@ class CloudStorageApplicationTests {
 		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("password-credential"))));
 		String modPassword=driver.findElement(By.id("password-credential")).getText();
 
-	//	credential = credentialsMapper.getCredentialById(credentialId);
+		credential = credentialsMapper.getCredentialById(credentialId);
 		String c = encryptionService.encryptValue(changedPassword, credential.getKey());
 
 		Assertions.assertEquals(modPassword, c);
