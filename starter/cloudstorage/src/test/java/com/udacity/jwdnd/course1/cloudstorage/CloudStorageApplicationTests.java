@@ -439,6 +439,9 @@ class CloudStorageApplicationTests {
 		String a = encryptionService.decryptValue(passwordEncryptedCredential, credential.getKey());
 		Assertions.assertEquals(credentialPassword,a);
 
+
+		System.out.println("pass " + credential.getPassword());
+
 		/*
 		existing set of credentials flow
 		 */
@@ -507,7 +510,6 @@ class CloudStorageApplicationTests {
 
 		credential = credentialsMapper.getCredentialById(credentialId);
 		String c = encryptionService.encryptValue(changedPassword, credential.getKey());
-
 		Assertions.assertEquals(modPassword, c);
 
 		/*
