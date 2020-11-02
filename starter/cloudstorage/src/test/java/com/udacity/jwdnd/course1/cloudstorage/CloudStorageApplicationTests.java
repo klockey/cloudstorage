@@ -1,26 +1,37 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.mapper.CredentialsMapper;
+import com.udacity.jwdnd.course1.cloudstorage.model.Credentials;
 import com.udacity.jwdnd.course1.cloudstorage.service.EncryptionService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.util.Assert;
 
 import java.security.SecureRandom;
 import java.util.Base64;
+
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
 
 
-	EncryptionService encryptionService = new EncryptionService();
+	@Autowired
+	private EncryptionService encryptionService;
+
+	@Autowired
+	private CredentialsMapper credentialsMapper;
+
 
 
 	@LocalServerPort
@@ -214,15 +225,14 @@ class CloudStorageApplicationTests {
 		Assertions.assertEquals(title,titleNote);
 
 		//Verify the inclusion of Note description
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/td[2]"))));
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/td[2]"))));
 		String descriptionNote = driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/td[2]")).getText();
 		Assertions.assertEquals(description,descriptionNote);
 
-		/*
-		/*   edit note and verify
-		*/
-
-		//*** Write a test that edits an existing note and verifies that the changes are displayed  ***
+/*
+		Edits note and verifies it is edited
+		 */
+		//Write a test that deletes a note and verifies that the note is no longer displayed.
 
 		wait.until(ExpectedConditions.titleContains("Home"));
 		Assertions.assertEquals("Home",driver.getTitle());
@@ -238,26 +248,31 @@ class CloudStorageApplicationTests {
 		//Click and fill field note-title
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("note-title"))));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("note-title")));
-		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + title + "';", driver.findElement(By.id("note-title")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + "A" + title + "';", driver.findElement(By.id("note-title")));
 
 		//Click and fill field note-description
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("note-description"))));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("note-description")));
-		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + description + "';", driver.findElement(By.id("note-description")));
+		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + "A" + description + "';", driver.findElement(By.id("note-description")));
 
 		//Click in the field //*[@id="noteModal"]/div/div/div[3]/button[2] (Save changes button of modal)
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@id=\"noteModal\"]/div/div/div[3]/button[2]"))));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.xpath("//*[@id=\"noteModal\"]/div/div/div[3]/button[2]")));
 
+		//Click in the field nav-notes-tab
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("nav-notes-tab"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("nav-notes-tab")));
+
 		//Verify the inclusion of Note title
 		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/th"))));
 		titleNote = driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/th")).getText();
-		Assertions.assertEquals(title,titleNote);
+		Assertions.assertEquals("A" + title,titleNote);
 
 		//Verify the inclusion of Note description
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/td[2]"))));
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/td[2]"))));
 		descriptionNote = driver.findElement(By.xpath("//*[@id=\"userTable\"]/tbody/tr/td[2]")).getText();
-		Assertions.assertEquals(description,descriptionNote);
+		Assertions.assertEquals("A" + description,descriptionNote);
+
 
 		/*
 		Deletes note and verifies it is deleted
@@ -274,7 +289,16 @@ class CloudStorageApplicationTests {
         //Click in the field delete-button
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("delete-button"))));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("delete-button")));
-		Assertions.assertNotEquals(description, descriptionNote);
+
+		// check if description is present
+		Boolean isPresent = driver.findElements(By.id("description-title")).size() > 0;
+		Assertions.assertNotEquals(true,isPresent);
+
+		// check if description is present
+		isPresent = driver.findElements(By.id("description-note")).size() > 0;
+		Assertions.assertNotEquals(true,isPresent);
+
+
 	}
 
 	@Test
@@ -349,7 +373,6 @@ class CloudStorageApplicationTests {
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("submit-button")));
 
 
-
 		/*
 			Credential Flow
 		 */
@@ -402,18 +425,18 @@ class CloudStorageApplicationTests {
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@id=\"credentialTable\"]/tbody/tr/td[3]"))));
 		String passwordEncryptedCredential = driver.findElement(By.xpath("//*[@id=\"credentialTable\"]/tbody/tr/td[3]")).getText();
 
-		System.out.println("password encrypted" + passwordEncryptedCredential);
 
-		System.out.println("credential " + credentialPassword);
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("edit-delete-button"))));
+		WebElement credentialElement = driver.findElement(By.id("edit-delete-button"));
 
-		// decrypt password
-		SecureRandom random = new SecureRandom();
-		byte[] key = new byte[16];
-		random.nextBytes(key);
-		String encodedKey = Base64.getEncoder().encodeToString(key);
+		String href = credentialElement.getAttribute("href");
+		String [] hrefParse = href.split("/");
+		System.out.println(hrefParse[0]+hrefParse[1]+hrefParse[2]+hrefParse[3]+hrefParse[4]);
+		System.out.println(hrefParse[0]+" "+ hrefParse[1]+" "+hrefParse[2]+" "+hrefParse[3]+" "+hrefParse[4]+" "+hrefParse[5]);
+		int credentialId = Integer.parseInt(hrefParse[5]);
 
-		String a = this.encryptionService.decryptValue(passwordEncryptedCredential, encodedKey);
-
+		Credentials credential = credentialsMapper.getCredentialById(credentialId);
+		String a = encryptionService.decryptValue(passwordEncryptedCredential, credential.getKey());
 		Assertions.assertEquals(credentialPassword,a);
 
 		/*
@@ -422,6 +445,7 @@ class CloudStorageApplicationTests {
 		//Write a test that views an existing set of credentials, verifies that the viewable password is unencrypted,
 		// edits the credentials, and verifies that the changes are displayed.
 
+		//test uncrypted password
 
 		wait.until(ExpectedConditions.titleContains("Home"));
 		Assertions.assertEquals("Home",driver.getTitle());
@@ -431,13 +455,14 @@ class CloudStorageApplicationTests {
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("nav-credentials-tab")));
 
 		//Click in the field edit-button
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("edit-button"))));
-		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("edit-button")));
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("edit-credential-button"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("edit-credential-button")));
 
-		// test unencrypted password
-		Assertions.assertEquals(credentialPassword, this.encryptionService.encryptValue(driver.findElement(By.id("credential-password")).getText(),encodedKey));
+		String b = encryptionService.encryptValue(credentialPassword,credential.getKey());
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("credential-password"))));
+		Assertions.assertNotEquals(credentialPassword,b);
 
-
+		// edits credentials
 		//Click and fill field credential-url
 		String changedURL = "A"+ URL;
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("credential-url"))));
@@ -457,13 +482,33 @@ class CloudStorageApplicationTests {
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("credential-password"))));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("credential-password")));
 		((JavascriptExecutor) driver).executeScript("arguments[0].value='" + changedPassword + "';", driver.findElement(By.id("credential-password")));
-		Assertions.assertNotEquals(changedPassword,driver.findElement(By.id("credential-password")).getText());
+	//	Assertions.assertNotEquals(changedPassword,driver.findElement(By.id("credential-password")).getText());
 
 		//Click in the submit-button
 		//Click in the field //*[@id="noteModal"]/div/div/div[3]/button[2] (Save changes button of modal)
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@id=\"credentialModal\"]/div/div/div[3]/button[2]"))));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.xpath("//*[@id=\"credentialModal\"]/div/div/div[3]/button[2]")));
 
+		wait.until(ExpectedConditions.titleContains("Home"));
+		Assertions.assertEquals("Home",driver.getTitle());
+
+		//Click in the field nav-notes-tab
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("nav-credentials-tab"))));
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("nav-credentials-tab")));
+
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("url-credential"))));
+		String modURL=driver.findElement(By.id("url-credential")).getText();
+
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("username-credential"))));
+		String modUsername=driver.findElement(By.id("username-credential")).getText();
+
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("password-credential"))));
+		String modPassword=driver.findElement(By.id("password-credential")).getText();
+
+	//	credential = credentialsMapper.getCredentialById(credentialId);
+		String c = encryptionService.encryptValue(changedPassword, credential.getKey());
+
+		Assertions.assertEquals(modPassword, c);
 
 		/*
 		delete credential
@@ -476,13 +521,18 @@ class CloudStorageApplicationTests {
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("nav-credentials-tab")));
 
 		//Click in the field delete-button
-		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("edit-button"))));
+		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id("edit-delete-button"))));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", driver.findElement(By.id("edit-delete-button")));
 
-		Assertions.assertNotEquals(changedUsername, driver.findElement(By.xpath("//*[@id=\"credentialTable\"]/tbody/tr/td[1]")).getText());
+		boolean urlTest = !changedURL.equals(driver.findElement(By.id("credential-url")).getText());
+		if (urlTest) System.out.println("deleted url");
+		boolean usernameTest = !changedUsername.equals(driver.findElement(By.id("credential-username")).getText());
+		if (usernameTest) System.out.println("deleted username");
+		boolean passwordTest = !changedPassword.equals(driver.findElement(By.id("credential-password")).getText());
+		if (passwordTest) System.out.println("deleted password");
+
+		Assertions.assertNotEquals(changedURL,driver.findElement(By.id("credential-url")).getText());
+		Assertions.assertNotEquals(changedUsername,driver.findElement(By.id("credential-username")).getText());
+		Assertions.assertNotEquals(changedPassword,driver.findElement(By.id("credential-password")).getText());
 	}
-
-
-
-
 }

@@ -15,26 +15,29 @@
                     <button id="submit-logout" type="submit" class="btn btn-secondary float-right">Logout</button>
                 </form>
             </div>
-            <div id="success-msg" th:if="${param.creation}" class="alert alert-dark">
+            <div id="create-credential-msg" th:if="${param.createCredential}" class="alert alert-dark">
+                You successfully created a credential.
+            </div>
+            <div id="update-credential-msg" th:if="${param.updateCredential}" class="alert alert-dark">
+                You successfully updated a credential.
+            </div>
+            <div id="delete-credential-msg" th:if="${param.deleteCredential}" class="alert alert-dark">
+                You successfully deleted a credential.
+            </div>
+            <div id="success-msg" th:if="${param.createNote}" class="alert alert-dark">
                 You successfully created a note.
             </div>
-            <div id="delete-msg" th:if="${param.deletion}" class="alert alert-dark">
+            <div id="delete-msg" th:if="${param.deleteNote}" class="alert alert-dark">
                 You deleted a note.
             </div>
-            <div id="update-msg" th:if="${param.update}" class="alert alert-dark">
-                You updated a file.
+            <div id="update-msg" th:if="${param.updateNote}" class="alert alert-dark">
+                You updated a note.
             </div>
             <div id="deleteFile-msg" th:if="${param.deleteFile}" class="alert alert-dark">
                 You deleted a file.
             </div>
-            <div id="download-msg" th:if="${param.download}" class="alert alert-dark">
-                You downloaded a file.
-            </div>
             <div id="selectFile-msg" th:if="${param.selectFile}" class="alert alert-dark">
                 Please a select a File!
-            </div>
-            <div id="mutipleFile-msg" th:if="${param.multipleFile}" class="alert alert-dark">
-                File already exists!
             </div>
             <div id="uploadFile-msg" th:if="${param.uploadFile}" class="alert alert-dark">
                 File uploaded!
@@ -42,8 +45,9 @@
             <div id="duplicateUploadFile-msg" th:if="${param.duplicateUploadFile}" class="alert alert-dark">
                 File already exists!
             </div>
-
-
+            <div id="fileDownload-msg" th:if="${param.fileDownload}" class="alert alert-dark">
+                File Download!
+            </div>
             <div id="contentDiv" style="clear: right;">
                 <nav style="clear: right;">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -170,9 +174,9 @@
                                         <a  id="edit-credential-button" class="btn btn-success" th:onclick="javascript: showCredentialModal([[${credential.credentialId}]],[[${credential.url}]],[[${credential.username}]], [[${encryptionService.decryptValue(credential.password, credential.key)}]])">Edit</a>
                                         <a  id="edit-delete-button" th:href="@{/credential/delete/{credentialId}(credentialId=${credential.credentialId})}" class="btn btn-danger" >Delete</a>
                                     </td>
-                                    <th th:text="${credential.url}" scope="row">Example Credential URL</th>
-                                    <td th:text="${credential.username}">Example Credential Username</td>
-                                    <td th:text="${credential.password}">Example Credential Password</td>
+                                    <th  id="url-credential" th:text="${credential.url}" scope="row">Example Credential URL</th>
+                                    <td  id="username-credential" th:text="${credential.username}">Example Credential Username</td>
+                                    <td  id="password-credential" th:text="${credential.password}">Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -191,11 +195,11 @@
                                             <input type="hidden" name="credentialId" id="credential-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">URL</label>
-                                                <input type="text" name= "url" class="form-control" id="credential-url" maxlength="100" required>
+                                                <input  type="text" name= "url" class="form-control" id="credential-url" maxlength="100" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Username</label>
-                                                <input type="text" name= "username" class="form-control" id="credential-username" maxlength="30" required>
+                                                <input  type="text" name= "username" class="form-control" id="credential-username" maxlength="30" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Password</label>

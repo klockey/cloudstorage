@@ -28,42 +28,26 @@ public class FileDownloadController {
         this.fileService = fileService;
     }
 
-    //    private static final String EXTERNAL_FILE_PATH = "C:/fileDownloadExample/";
-
     @GetMapping("/file/view/{fileId}")
     public void downloadPDFResource(HttpServletRequest request, HttpServletResponse response,
                                     @PathVariable("fileId") Integer fileId) throws IOException {
-     //   File file = new File(EXTERNAL_FILE_PATH + fileName);
 
         String home = System.getProperty("user.home");
-     //   File file = new File(home+"/Downloads/" + fileName + ".txt");
-
         Files fileDownload = fileService.getFileById(fileId);
-
         File file = new File(home+"/Downloads/" + fileDownload.getFileName());
-
-
         System.out.println(home+"/Downloads/" + fileDownload.getFileName());
 
-
         if (file.exists()) {
-
             String mimeType = URLConnection.guessContentTypeFromName(file.getName());
-
             if (mimeType == null) {
                 mimeType = "application/octet-stream";
             }
 
             response.setContentType(mimeType);
-
             response.setHeader("Content-Disposition", String.format("inline; filename=\"" + file.getName() + "\""));
-
             response.setContentLength((int) file.length());
-
             InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-
             FileCopyUtils.copy(inputStream, response.getOutputStream());
-
         }
     }
 }

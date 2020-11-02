@@ -48,38 +48,27 @@ public class FileUploadController {
 
     @PostMapping("/fileUpload")
     public String uploader(Authentication auth, @RequestParam("fileToBeUploaded")  MultipartFile fileUpload, Model model, RedirectAttributes redirectAttributes ) {
-     //   Set set = new HashSet<String>();
 
         boolean duplicateName = false;
         try {
             System.out.println("fileUpload");
             Users userDb = userService.getUser(auth.getName());
-
             Files file = new Files(null, fileUpload.getOriginalFilename(),fileUpload.getContentType(),Long.toString(fileUpload.getSize()), userDb.getUserId(),fileUpload.getBytes());
+            List<Files> sourceList = this.fileService.getFiles(userDb.getUserId());
+            Set<String> set = new HashSet<>();
 
-            List <String> arrayListFileNames = new ArrayList<>();
-
-            for (Files files : this.fileService.getFiles(userDb.getUserId())){
-                arrayListFileNames.add(file.getFileName());
+            for (Files files : sourceList){
+                set.add(files.getFileName());
             }
+            System.out.print(set.size());
 
-            Set<String> set = new HashSet<>(arrayListFileNames);
-
-            for (String files : arrayListFileNames) {
-                if (!set.add(files)) {
-                    duplicateName = true;
-                    System.out.println("duplicate");
-                    break;
-                }
-            }
-
-             if(duplicateName){
-                 redirectAttributes.addAttribute("duplicateUploadFile",true);
-                 System.out.println("duplicate upload");
-             } else if (fileUpload.getSize() > 0){
-               fileService.uploadFile(file);
-               redirectAttributes.addAttribute("upload",true);
-            } else{
+            if(set.size() >= 1 && !set.add(file.getFileName())){
+                redirectAttributes.addAttribute("duplicateUploadFile",true);
+                System.out.println("duplicate");
+            } else if (fileUpload.getSize() > 0) {
+                fileService.uploadFile(file);
+                redirectAttributes.addAttribute("uploadFile",true);
+            } else {
                 redirectAttributes.addAttribute("selectFile",true);
             }
 

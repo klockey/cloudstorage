@@ -37,20 +37,15 @@ public class NoteController {
         System.out.println("NOTE TITLE:" + noteTitle);
         System.out.println("NOTE DESCRIPTION:" + noteDescription);
         System.out.println("user id:" + userDb.getUserId());
-      //  redirectAttributes.addAttribute("creation",false);
 
         if(noteId == 0){
             noteService.uploadNote(noteTitle, noteDescription, userDb.getUserId());
-    //        model.addAttribute("creation", true);
             System.out.println("creation");
-//            redirectAttributes.addAttribute("update","false");
-            redirectAttributes.addAttribute("creation","true");
+            redirectAttributes.addAttribute("createNote","true");
         } else{
             System.out.println("update");
             noteService.updateNote(noteTitle, noteDescription, noteId);
-          //  redirectAttributes.addAttribute("creation","false");
-            redirectAttributes.addAttribute("update", "true");
-         //   redirectAttributes.addAttribute("deletion", false);
+            redirectAttributes.addAttribute("updateNote", "true");
         }
 
         model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
@@ -66,9 +61,7 @@ public class NoteController {
         model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
         model.addAttribute("files", this.fileService.getFiles(userDb.getUserId()));
         model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
-       // model.addAttribute("deletion", true);
-
-        redirectAttributes.addAttribute("deletion",true);
+        redirectAttributes.addAttribute("deleteNote",true);
         return  "redirect:/home";
     }
 }

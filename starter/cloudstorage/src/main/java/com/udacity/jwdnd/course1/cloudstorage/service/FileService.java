@@ -32,4 +32,5 @@ public class FileService {
 
     public Files getFileById(Integer fileId) { return fileMapper.getFileByFileId(fileId); }
 
+    public Files getFileByName(String fileName) { return fileMapper.getFileByName(fileName); }
 }

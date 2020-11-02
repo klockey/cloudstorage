@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -32,18 +33,19 @@ public class CredentialController {
     }
 
     @GetMapping("/credential/delete/{credentialId}")
-    public String deleteCredential(Authentication auth, @PathVariable(value = "credentialId") int credentialId, Model model) {
+    public String deleteCredential(Authentication auth, @PathVariable(value = "credentialId") int credentialId, Model model,  RedirectAttributes redirectAttributes) {
         System.out.println("delete " + credentialId);
         Users userDb = userService.getUser(auth.getName());
         this.credentialService.deleteCredential(credentialId);
         model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
         model.addAttribute("files", this.fileService.getFiles(userDb.getUserId()));
         model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
+        redirectAttributes.addAttribute("deleteCredential",true);
         return "redirect:/home";
     }
 
     @PostMapping("/credentialModal")
-    public String postView(Authentication auth, @ModelAttribute Credentials credentials, @RequestParam("credentialId") int credentialId, @RequestParam("url") String url, @RequestParam("username") String username, @RequestParam("password") String password, Model model) {
+    public String postView(Authentication auth, @ModelAttribute Credentials credentials, @RequestParam("credentialId") int credentialId, @RequestParam("url") String url, @RequestParam("username") String username, @RequestParam("password") String password, Model model, RedirectAttributes redirectAttributes) {
         Users userDb = userService.getUser(auth.getName());
         SecureRandom random = new SecureRandom();
         System.out.println("password " + password);
@@ -55,9 +57,11 @@ public class CredentialController {
 
         if (credentialId == 0) {
             credentialService.uploadCredential(url, username, encodedKey, encryptedPassword, userDb.getUserId());
+            redirectAttributes.addAttribute("createCredential","true");
 
         } else {
             credentialService.updateCredential(url, username, encodedKey, encryptedPassword, credentialId);
+            redirectAttributes.addAttribute("updateCredential", "true");
         }
             model.addAttribute("credentials", this.credentialService.getCredentials(userDb.getUserId()));
             model.addAttribute("notes", this.noteService.getNotes(userDb.getUserId()));
